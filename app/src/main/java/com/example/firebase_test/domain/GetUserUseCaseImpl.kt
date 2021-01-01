@@ -1,0 +1,11 @@
+package com.example.firebase_test.domain
+
+import com.example.firebase_test.data.User
+import com.example.firebase_test.data.UserRepository
+
+class GetUserUseCaseImpl(
+    private val userRepository: UserRepository
+) : GetUserUseCase {
+
+    override fun getUser(): User? = userRepository.getUser()
+}

@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">firebase_test</string>
+    <string name="new_user_register"><u>New user? Register</u></string>
+</resources>
