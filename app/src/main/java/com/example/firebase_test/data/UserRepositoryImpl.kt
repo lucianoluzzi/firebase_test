@@ -1,6 +1,7 @@
 package com.example.firebase_test.data
 
 import android.util.Log
+import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 
 class UserRepositoryImpl(
@@ -35,6 +36,22 @@ class UserRepositoryImpl(
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w("SignIn", "signInWithEmail:failure", task.exception)
+                    // updateUI(null)
+                }
+            }
+    }
+
+    override fun signIn(authCredential: AuthCredential) {
+        authenticator.signInWithCredential(authCredential)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    // Sign in success, update UI with the signed-in user's information
+                    Log.d("LoginFragment", "signInWithCredential:success")
+                    val user = authenticator.currentUser
+                    // updateUI(user)
+                } else {
+                    // If sign in fails, display a message to the user.
+                    Log.w("LoginFragment", "signInWithCredential:failure", task.exception)
                     // updateUI(null)
                 }
             }

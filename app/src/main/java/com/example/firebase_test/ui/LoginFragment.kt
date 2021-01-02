@@ -14,8 +14,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class LoginFragment : Fragment() {
@@ -58,7 +56,7 @@ class LoginFragment : Fragment() {
             val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken("967460337264-k2a97h05p3bmao9a3rm32gcrkrqvcbr6.apps.googleusercontent.com")
                 .requestEmail()
-                //.requestProfile()
+                .requestProfile()
                 .build()
 
             val googleSignInClient = GoogleSignIn.getClient(requireContext(), gso)
@@ -77,42 +75,21 @@ class LoginFragment : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
-                // Google Sign In was successful, authenticate with Firebase
                 val account = task.getResult(ApiException::class.java)
-                Log.d("LoginFragment", "firebaseAuthWithGoogle:" + account?.id)
-
                 account?.idToken?.let {
                     firebaseAuthWithGoogle(it)
                 }
             } catch (e: ApiException) {
-                // Google Sign In failed, update UI appropriately
                 Log.w("LoginFragment", "Google sign in failed", e)
-                // ...
             }
         }
     }
 
     private fun firebaseAuthWithGoogle(idToken: String) {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
-        val auth = Firebase.auth
-        auth.signInWithCredential(credential)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    // Sign in success, update UI with the signed-in user's information
-                    Log.d("LoginFragment", "signInWithCredential:success")
-                    val user = auth.currentUser
-                    // updateUI(user)
-                } else {
-                    // If sign in fails, display a message to the user.
-                    Log.w("LoginFragment", "signInWithCredential:failure", task.exception)
-                    // updateUI(null)
-                }
-
-                // ...
-            }
+        viewModel.onGoogleSignIn(credential)
     }
 }

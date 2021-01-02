@@ -5,12 +5,15 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.firebase_test.data.User
 import com.example.firebase_test.domain.GetUserUseCase
+import com.example.firebase_test.domain.GoogleSignInUseCase
 import com.example.firebase_test.domain.RegisterUserUseCase
 import com.example.firebase_test.domain.SignInUseCase
+import com.google.firebase.auth.AuthCredential
 
 class MainViewModel(
     getUserUseCase: GetUserUseCase,
     private val singInUseCase: SignInUseCase,
+    private val googleSignInUseCase: GoogleSignInUseCase,
     private val registerUserUseCase: RegisterUserUseCase
 ) : ViewModel() {
 
@@ -26,6 +29,10 @@ class MainViewModel(
             password = password,
             email = email
         )
+    }
+
+    fun onGoogleSignIn(authCredential: AuthCredential) {
+        googleSignInUseCase.signIn(authCredential)
     }
 
     fun onRegister(userName: String, password: String, email: String) {

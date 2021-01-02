@@ -15,10 +15,13 @@ val appModule = module {
 
     single<SignInUseCase> { SignInUseCaseImpl(get()) }
 
+    single<GoogleSignInUseCase> { GoogleSignInUseCaseImpl(get()) }
+
     single<RegisterUserUseCase> { RegisterUserUseCaseImpl(get()) }
 
     viewModel {
         MainViewModel(
+            get(),
             get(),
             get(),
             get()
