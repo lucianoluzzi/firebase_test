@@ -18,7 +18,7 @@ class MainViewModel(
     val userLiveData: LiveData<User?> = _userLiveData
 
     init {
-        _userLiveData.value = getUserUseCase.getUser()
+        _userLiveData.value = getUserUseCase.getCurrentUser()
     }
 
     fun onSignIn(password: String, email: String) {

@@ -7,5 +7,5 @@ class GetUserUseCaseImpl(
     private val userRepository: UserRepository
 ) : GetUserUseCase {
 
-    override fun getUser(): User? = userRepository.getUser()
+    override fun getCurrentUser(): User? = userRepository.getUser()
 }
