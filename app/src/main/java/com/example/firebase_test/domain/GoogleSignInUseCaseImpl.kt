@@ -7,5 +7,6 @@ class GoogleSignInUseCaseImpl(
     private val userRepository: UserRepository
 ) : GoogleSignInUseCase {
 
-    override fun signIn(authCredential: AuthCredential) = userRepository.signIn(authCredential)
+    override fun signIn(authCredential: AuthCredential, displayName: String) =
+        userRepository.signIn(authCredential, displayName)
 }

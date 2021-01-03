@@ -31,8 +31,8 @@ class MainViewModel(
         )
     }
 
-    fun onGoogleSignIn(authCredential: AuthCredential) {
-        googleSignInUseCase.signIn(authCredential)
+    fun onGoogleSignIn(authCredential: AuthCredential, displayName: String) {
+        googleSignInUseCase.signIn(authCredential, displayName)
     }
 
     fun onRegister(userName: String, password: String, email: String) {

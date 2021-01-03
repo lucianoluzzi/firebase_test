@@ -79,8 +79,13 @@ class LoginFragment : Fragment() {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
                 val account = task.getResult(ApiException::class.java)
-                account?.idToken?.let {
-                    firebaseAuthWithGoogle(it)
+                account?.let {
+                    val idToken = it.idToken
+                    val displayName = it.displayName
+
+                    if (idToken != null && displayName != null) {
+                        firebaseAuthWithGoogle(idToken, displayName)
+                    }
                 }
             } catch (e: ApiException) {
                 Log.w("LoginFragment", "Google sign in failed", e)
@@ -88,8 +93,8 @@ class LoginFragment : Fragment() {
         }
     }
 
-    private fun firebaseAuthWithGoogle(idToken: String) {
+    private fun firebaseAuthWithGoogle(idToken: String, displayName: String) {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
-        viewModel.onGoogleSignIn(credential)
+        viewModel.onGoogleSignIn(credential, displayName)
     }
 }
