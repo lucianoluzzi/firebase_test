@@ -43,7 +43,7 @@ class UserRepositoryImpl(
             }
     }
 
-    override fun signIn(authCredential: AuthCredential, displayName: String) {
+    override fun signIn(authCredential: AuthCredential, displayName: String?) {
         authenticator.signInWithCredential(authCredential)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -51,7 +51,7 @@ class UserRepositoryImpl(
                     Log.d("LoginFragment", "signInWithCredential:success")
                     val user = authenticator.currentUser
                     user?.let {
-                        if (it.displayName.isNullOrBlank()) {
+                        if (it.displayName.isNullOrBlank() && displayName != null) {
                             updateUserName(it, displayName)
                         }
                     }

@@ -4,15 +4,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.firebase_test.data.User
-import com.example.firebase_test.domain.GetUserUseCase
-import com.example.firebase_test.domain.GoogleSignInUseCase
-import com.example.firebase_test.domain.RegisterUserUseCase
-import com.example.firebase_test.domain.SignInUseCase
+import com.example.firebase_test.domain.*
+import com.facebook.AccessToken
 import com.google.firebase.auth.AuthCredential
 
 class MainViewModel(
     getUserUseCase: GetUserUseCase,
     private val singInUseCase: SignInUseCase,
+    private val facebookSignInUseCase: FacebookSignInUseCase,
     private val googleSignInUseCase: GoogleSignInUseCase,
     private val registerUserUseCase: RegisterUserUseCase
 ) : ViewModel() {
@@ -33,6 +32,10 @@ class MainViewModel(
 
     fun onGoogleSignIn(authCredential: AuthCredential, displayName: String) {
         googleSignInUseCase.signIn(authCredential, displayName)
+    }
+
+    fun onFacebookSignIn(token: AccessToken) {
+        facebookSignInUseCase.signIn(token)
     }
 
     fun onRegister(userName: String, password: String, email: String) {
