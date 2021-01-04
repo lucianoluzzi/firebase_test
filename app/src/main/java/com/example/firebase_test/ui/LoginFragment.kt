@@ -10,15 +10,25 @@ import androidx.fragment.app.Fragment
 import com.example.firebase_test.MainActivity
 import com.example.firebase_test.MainViewModel
 import com.example.firebase_test.databinding.LoginFragmentBinding
+import com.facebook.AccessToken
+import com.facebook.CallbackManager
+import com.facebook.FacebookCallback
+import com.facebook.FacebookException
+import com.facebook.login.LoginResult
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class LoginFragment : Fragment() {
 
     private val RC_SIGN_IN: Int = 1234
+    private val facebookCallbackManager = CallbackManager.Factory.create()
+
     private lateinit var binding: LoginFragmentBinding
     private val viewModel: MainViewModel by viewModel()
 
@@ -70,11 +80,51 @@ class LoginFragment : Fragment() {
                 activity.addFragment(RegisterFragment(), "Register")
             }
         }
+
+        with(binding.facebookSignin) {
+            fragment = this@LoginFragment
+            setReadPermissions("email", "public_profile")
+            registerCallback(facebookCallbackManager, object : FacebookCallback<LoginResult> {
+                override fun onSuccess(loginResult: LoginResult) {
+                    Log.d("Facebook", "facebook:onSuccess:$loginResult")
+                    handleFacebookAccessToken(loginResult.accessToken)
+                }
+
+                override fun onCancel() {
+                    Log.d("Facebook", "facebook:onCancel")
+                    // ...
+                }
+
+                override fun onError(error: FacebookException) {
+                    Log.d("Facebook", "facebook:onError", error)
+                    // ...
+                }
+            })
+        }
+    }
+
+    private fun handleFacebookAccessToken(token: AccessToken) {
+        Log.d("Facebook", "handleFacebookAccessToken:$token")
+
+        val credential = FacebookAuthProvider.getCredential(token.token)
+        val auth = Firebase.auth
+        auth.signInWithCredential(credential).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                // Sign in success, update UI with the signed-in user's information
+                Log.d("Facebook", "signInWithCredential:success")
+                val user = auth.currentUser
+            } else {
+                // If sign in fails, display a message to the user.
+                Log.w("Facebook", "signInWithCredential:failure", task.exception)
+
+            }
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
+        facebookCallbackManager.onActivityResult(requestCode, resultCode, data)
         if (requestCode == RC_SIGN_IN) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {

@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">firebase_test</string>
     <string name="new_user_register"><u>New user? Register</u></string>
+    <string name="facebook_app_id">147389133640182</string> <string name="fb_login_protocol_scheme">fb147389133640182</string>
 </resources>
