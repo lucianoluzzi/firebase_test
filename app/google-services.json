@@ -9,12 +9,12 @@
       "client_info": {
         "mobilesdk_app_id": "1:967460337264:android:04e266c1e98fa74fe726b5",
         "android_client_info": {
-          "package_name": "com.example.firebase_test"
+          "package_name": "com.lucianoluzzi.firebase_test"
         }
       },
       "oauth_client": [
         {
-          "client_id": "967460337264-2nvfp8ta6slokhv2g4drno9iqcrnl5rc.apps.googleusercontent.com",
+          "client_id": "967460337264-4uv9ba7s2d65siihnvg37dnn4a00h9u3.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -27,7 +27,7 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "967460337264-2nvfp8ta6slokhv2g4drno9iqcrnl5rc.apps.googleusercontent.com",
+              "client_id": "967460337264-k2a97h05p3bmao9a3rm32gcrkrqvcbr6.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
