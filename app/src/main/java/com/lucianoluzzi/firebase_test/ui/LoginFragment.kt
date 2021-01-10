@@ -7,8 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.lucianoluzzi.firebase_test.MainActivity
-import com.lucianoluzzi.firebase_test.MainViewModel
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
 import com.facebook.FacebookException
@@ -17,7 +15,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.GoogleAuthProvider
+import com.lucianoluzzi.firebase_test.MainActivity
+import com.lucianoluzzi.firebase_test.MainViewModel
 import com.lucianoluzzi.firebase_test.databinding.LoginFragmentBinding
+import com.lucianoluzzi.firebase_test.domain.model.Result
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class LoginFragment : Fragment() {
@@ -45,6 +46,13 @@ class LoginFragment : Fragment() {
                 // already signed in
             } ?: run {
                 // sign in or register
+            }
+        }
+        viewModel.resultLiveData.observe(viewLifecycleOwner) { result ->
+            when (result) {
+                is Result.Success -> goToPricingFragment()
+                is Result.Fail -> {
+                }
             }
         }
 
@@ -97,6 +105,10 @@ class LoginFragment : Fragment() {
                 }
             })
         }
+    }
+
+    private fun goToPricingFragment() {
+        (requireActivity() as MainActivity).addFragment(PricingFragment(), "PricingFragment")
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

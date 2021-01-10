@@ -5,6 +5,8 @@ import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.userProfileChangeRequest
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class UserRepositoryImpl(
     private val authenticator: FirebaseAuth
@@ -27,20 +29,36 @@ class UserRepositoryImpl(
         return null
     }
 
-    override fun signIn(password: String, email: String) {
-        authenticator.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    // Sign in success, update UI with the signed-in user's information
-                    Log.d("SignIn", "signInWithEmail:success")
-                    val user = authenticator.currentUser
-                    // updateUI(user)
-                } else {
-                    // If sign in fails, display a message to the user.
-                    Log.w("SignIn", "signInWithEmail:failure", task.exception)
-                    // updateUI(null)
+    override suspend fun signIn(password: String, email: String): User? {
+        return suspendCoroutine { continuation ->
+            authenticator.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        // Sign in success, update UI with the signed-in user's information
+                        Log.d("SignIn", "signInWithEmail:success")
+
+                        val user = authenticator.currentUser
+                        user?.let {
+                            val name = it.displayName
+                            val email = it.email
+
+                            if (name != null && email != null) {
+                                continuation.resume(
+                                    User(
+                                        name = name,
+                                        email = email
+                                    )
+                                )
+                            }
+                        }
+                        // updateUI(user)
+                    } else {
+                        // If sign in fails, display a message to the user.
+                        Log.w("SignIn", "signInWithEmail:failure", task.exception)
+                        // updateUI(null)
+                    }
                 }
-            }
+        }
     }
 
     override fun signIn(authCredential: AuthCredential, displayName: String?) {
@@ -83,8 +101,9 @@ class UserRepositoryImpl(
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d("Register", "createUserWithEmail:success")
-                    val user = authenticator.currentUser
-                    // updateUI(user)
+                    authenticator.currentUser?.let {
+                        updateUserName(it, userName)
+                    }
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w("Register", "createUserWithEmail:failure", task.exception)

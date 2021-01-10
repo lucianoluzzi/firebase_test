@@ -4,7 +4,7 @@ import com.google.firebase.auth.AuthCredential
 
 interface UserRepository {
     fun getUser(): User?
-    fun signIn(password: String, email: String)
+    suspend fun signIn(password: String, email: String): User?
     fun signIn(authCredential: AuthCredential, displayName: String? = null)
     fun register(userName: String, password: String, email: String)
 }
