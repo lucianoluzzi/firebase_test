@@ -1,4 +1,4 @@
-package com.lucianoluzzi.firebase_test
+package com.lucianoluzzi.firebase_test.viewModel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

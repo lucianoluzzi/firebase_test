@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.lucianoluzzi.firebase_test.MainViewModel
+import com.lucianoluzzi.firebase_test.viewModel.MainViewModel
 import com.lucianoluzzi.firebase_test.databinding.RegisterFragmentBinding
 import org.koin.android.viewmodel.ext.android.viewModel
 

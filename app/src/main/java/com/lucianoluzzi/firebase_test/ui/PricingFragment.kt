@@ -1,6 +1,5 @@
 package com.lucianoluzzi.firebase_test.ui
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -12,36 +11,14 @@ import com.android.billingclient.api.BillingClient.BillingResponseCode.OK
 import com.android.billingclient.api.BillingClient.BillingResponseCode.USER_CANCELED
 import com.android.billingclient.api.Purchase.PurchaseState.PURCHASED
 import com.lucianoluzzi.firebase_test.databinding.PricingFragmentBinding
+import com.lucianoluzzi.firebase_test.viewModel.PricingViewModel
+import org.koin.android.viewmodel.ext.android.viewModel
 
 class PricingFragment : Fragment() {
     private lateinit var billingClient: BillingClient
     private val TAG = "PricingFragment"
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        // Set up the billing client
-        billingClient = BillingClient
-            .newBuilder(requireContext())
-            .enablePendingPurchases()
-            .setListener { billingResult, purchases ->
-
-            }
-            .build()
-
-        billingClient.startConnection(object : BillingClientStateListener {
-            override fun onBillingSetupFinished(billingResult: BillingResult) {
-                if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
-                    Log.d(TAG, "Billing client successfully set up")
-                    queryPurchases()
-                }
-            }
-
-            override fun onBillingServiceDisconnected() {
-                Log.d(TAG, "Billing service disconnected")
-            }
-        })
-    }
+    private val viewModel: PricingViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -51,30 +28,20 @@ class PricingFragment : Fragment() {
         return PricingFragmentBinding.inflate(inflater).root
     }
 
-    private fun querySubscriptions() {
-        val skuListToQuery = ArrayList<String>().apply {
-            add("assinatura_teste_1")
-            add("assinatura_trimestral_1")
-            add("assinatura_anual_1")
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        viewModel.purchasedSubscriptionsLiveData.observe(viewLifecycleOwner) { purchases ->
+            if (purchases.isNullOrEmpty()) {
+                viewModel.getSubscriptions()
+            } else {
+                Log.i(TAG, "Existing purchases: ${purchases.size}")
+            }
         }
-
-        // Here is where we can add more product IDs to query for based on
-        //   what was set up in the Play Console.
-
-        val params = SkuDetailsParams.newBuilder()
-        params
-            .setSkusList(skuListToQuery)
-            .setType(BillingClient.SkuType.SUBS)
-        // SkuType.INAPP refers to 'managed products' or one time purchases.
-        // To query for subscription products, you would use SkuType.SUBS.
-
-        billingClient.querySkuDetailsAsync(
-            params.build()
-        ) { result, skuDetails ->
-            Log.d(TAG, "onSkuDetailsResponse ${result.responseCode}")
-            if (skuDetails != null) {
-                for (skuDetail in skuDetails) {
-                    Log.d(TAG, skuDetail.toString())
+        viewModel.subscriptionsLiveData.observe(viewLifecycleOwner) { subscriptions ->
+            if (subscriptions != null) {
+                for (subscription in subscriptions) {
+                    Log.d(TAG, subscription.toString())
                 }
             } else {
                 Log.d(TAG, "No skus found from query")
@@ -82,30 +49,9 @@ class PricingFragment : Fragment() {
         }
     }
 
-    fun queryPurchases() {
-        if (!billingClient.isReady) {
-            Log.e(TAG, "queryPurchases: BillingClient is not ready")
-        }
-        // Query for existing in app products that have been purchased. This does NOT include subscriptions.
-        val result = billingClient.queryPurchases(BillingClient.SkuType.SUBS)
-        if (result.purchasesList.isNullOrEmpty()) {
-            Log.i(TAG, "No existing in app purchases found.")
-            querySubscriptions()
-        } else {
-            Log.i(TAG, "Existing purchases: ${result.purchasesList}")
-        }
-    }
-
-    fun launchPurchaseFlow(skuDetails: SkuDetails) {
-        val flowParams = BillingFlowParams.newBuilder()
-            .setSkuDetails(skuDetails)
-            .build()
-        val responseCode = billingClient.launchBillingFlow(requireActivity(), flowParams)
-        Log.i(TAG, "launchPurchaseFlow result $responseCode")
-    }
-
     // Google Play calls this method to propogate the result of the purchase flow
-    fun onPurchasesUpdated(billingResult: BillingResult, purchases: List<Purchase?>?) {
+    // need to figure out how to set this in a clean fashion
+    private fun onPurchasesUpdated(billingResult: BillingResult, purchases: List<Purchase?>?) {
         if (billingResult.responseCode == OK && purchases != null) {
             for (purchase in purchases) {
                 purchase?.let {
@@ -151,5 +97,14 @@ class PricingFragment : Fragment() {
                 billingClient.acknowledgePurchase(acknowledgePurchaseParams.build())
             }
         }
+    }
+
+    // When user selects a subscription
+    fun launchPurchaseFlow(skuDetails: SkuDetails) {
+        val flowParams = BillingFlowParams.newBuilder()
+            .setSkuDetails(skuDetails)
+            .build()
+        val responseCode = billingClient.launchBillingFlow(requireActivity(), flowParams)
+        Log.i(TAG, "launchPurchaseFlow result $responseCode")
     }
 }

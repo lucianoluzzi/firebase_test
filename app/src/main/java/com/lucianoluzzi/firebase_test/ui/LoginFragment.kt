@@ -16,7 +16,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.GoogleAuthProvider
 import com.lucianoluzzi.firebase_test.MainActivity
-import com.lucianoluzzi.firebase_test.MainViewModel
+import com.lucianoluzzi.firebase_test.viewModel.MainViewModel
 import com.lucianoluzzi.firebase_test.databinding.LoginFragmentBinding
 import com.lucianoluzzi.firebase_test.domain.model.Result
 import org.koin.android.viewmodel.ext.android.viewModel
@@ -33,7 +33,7 @@ class LoginFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = LoginFragmentBinding.inflate(inflater)
         return binding.root
     }
