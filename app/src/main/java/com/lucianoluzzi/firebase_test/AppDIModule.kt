@@ -29,6 +29,10 @@ val appModule = module {
 
     single<GetPurchasesUseCase> { GetPurchasesUseCaseImpl(get()) }
 
+    single<GetSubscriptionsUseCase> { GetSubscriptionsUseCaseImpl(get()) }
+
+    single<ConsumeUseCase> { ConsumeUseCaseImpl(get()) }
+
     viewModel {
         MainViewModel(
             get(),
@@ -41,6 +45,8 @@ val appModule = module {
 
     viewModel {
         PricingViewModel(
+            get(),
+            get(),
             get()
         )
     }

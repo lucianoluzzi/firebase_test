@@ -1,10 +1,13 @@
 package com.lucianoluzzi.firebase_test.data
 
+import com.android.billingclient.api.ConsumeParams
 import com.android.billingclient.api.Purchase
 import com.android.billingclient.api.SkuDetails
 import com.android.billingclient.api.SkuDetailsParams
 import com.lucianoluzzi.firebase_test.domain.BillingClientProvider
+import com.lucianoluzzi.firebase_test.domain.model.ConsumeProductResult
 import com.lucianoluzzi.firebase_test.util.connect
+import com.lucianoluzzi.firebase_test.util.consumeProduct
 import com.lucianoluzzi.firebase_test.util.getProducts
 
 class PricingRepositoryImpl(
@@ -32,4 +35,7 @@ class PricingRepositoryImpl(
 
         return billingClient.getProducts(productDetailsParams)
     }
+
+    override suspend fun consumeProduct(consumeParams: ConsumeParams): ConsumeProductResult =
+        billingClient.consumeProduct(consumeParams)
 }

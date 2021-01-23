@@ -24,7 +24,7 @@ class PricingFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         return PricingFragmentBinding.inflate(inflater).root
     }
 
@@ -66,27 +66,8 @@ class PricingFragment : Fragment() {
     }
 
     private fun handlePurchase(purchase: Purchase) {
-        // If your app has a server component, first verify the purchase by checking that the
-        // purchaseToken hasn't already been used.
-
-        // If purchase was a consumable product (a product you want the user to be able to buy again)
-        handleConsumableProduct(purchase)
-
         // If purchase was non-consumable product
         handleNonConsumableProduct(purchase)
-    }
-
-    private fun handleConsumableProduct(purchase: Purchase) {
-        val consumeParams =
-            ConsumeParams.newBuilder()
-                .setPurchaseToken(purchase.purchaseToken)
-                .build()
-
-        billingClient.consumeAsync(consumeParams) { billingResult, purchaseToken ->
-            if (billingResult.responseCode == OK) {
-                // Handle the success of the consume operation.
-            }
-        }
     }
 
     private fun handleNonConsumableProduct(purchase: Purchase) {
