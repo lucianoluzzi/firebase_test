@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.billingclient.api.Purchase
 import com.android.billingclient.api.SkuDetails
+import com.lucianoluzzi.firebase_test.domain.AcknowledgePurchaseUseCase
 import com.lucianoluzzi.firebase_test.domain.ConsumeUseCase
 import com.lucianoluzzi.firebase_test.domain.GetPurchasesUseCase
 import com.lucianoluzzi.firebase_test.domain.GetSubscriptionsUseCase
@@ -14,7 +15,8 @@ import kotlinx.coroutines.launch
 class PricingViewModel(
     getPurchasesUseCase: GetPurchasesUseCase,
     private val getSubscriptionsUseCase: GetSubscriptionsUseCase,
-    private val consumeUseCase: ConsumeUseCase
+    private val consumeUseCase: ConsumeUseCase,
+    private val acknowledgePurchaseUseCase: AcknowledgePurchaseUseCase
 ) : ViewModel() {
 
     private val _purchasedSubscriptionsLiveData = MutableLiveData<List<Purchase>?>()
@@ -33,6 +35,12 @@ class PricingViewModel(
         viewModelScope.launch {
             val subscriptions = getSubscriptionsUseCase.getSubscriptions()
             _subscriptionsLiveData.value = subscriptions
+        }
+    }
+
+    fun acknowledgePurchase(purchase: Purchase) {
+        viewModelScope.launch {
+            acknowledgePurchaseUseCase.acknowledgePurchase(purchase)
         }
     }
 

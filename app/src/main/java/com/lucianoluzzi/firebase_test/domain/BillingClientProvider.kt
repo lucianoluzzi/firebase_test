@@ -7,5 +7,8 @@ class BillingClientProvider(context: Context) {
     val billingClient = BillingClient
         .newBuilder(context)
         .enablePendingPurchases()
+        .setListener { billingResult, mutableList ->
+
+        }
         .build()
 }

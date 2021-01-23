@@ -1,9 +1,6 @@
 package com.lucianoluzzi.firebase_test.data
 
-import com.android.billingclient.api.ConsumeParams
-import com.android.billingclient.api.Purchase
-import com.android.billingclient.api.SkuDetails
-import com.android.billingclient.api.SkuDetailsParams
+import com.android.billingclient.api.*
 import com.lucianoluzzi.firebase_test.domain.BillingClientProvider
 import com.lucianoluzzi.firebase_test.domain.model.ConsumeProductResult
 import com.lucianoluzzi.firebase_test.util.connect
@@ -16,26 +13,30 @@ class PricingRepositoryImpl(
 
     private val billingClient = billingClientProvider.billingClient
 
+
     override suspend fun getPurchases(purchaseType: String): List<Purchase>? {
-        val isConnected = billingClient.connect()
-        if (!isConnected) {
+        val connectIfNeeded = connectIfNeeded()
+        if (!connectIfNeeded)
             return null
-        }
 
         return billingClient.queryPurchases(purchaseType).purchasesList
     }
 
-    override suspend fun getProducts(
-        productDetailsParams: SkuDetailsParams
-    ): List<SkuDetails>? {
-        val isConnected = billingClient.connect()
-        if (!isConnected) {
+    override suspend fun getProducts(productDetailsParams: SkuDetailsParams): List<SkuDetails>? {
+        val connectIfNeeded = connectIfNeeded()
+        if (!connectIfNeeded)
             return null
-        }
 
         return billingClient.getProducts(productDetailsParams)
     }
 
+    private suspend fun connectIfNeeded(): Boolean {
+        return billingClient.isReady || billingClient.connect()
+    }
+
     override suspend fun consumeProduct(consumeParams: ConsumeParams): ConsumeProductResult =
         billingClient.consumeProduct(consumeParams)
+
+    override suspend fun acknowledgePurchase(acknowledgePurchaseParams: AcknowledgePurchaseParams): BillingResult =
+        billingClient.acknowledgePurchase(acknowledgePurchaseParams)
 }

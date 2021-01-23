@@ -25,6 +25,8 @@ val appModule = module {
 
     single<RegisterUserUseCase> { RegisterUserUseCaseImpl(get()) }
 
+    single { BillingClientProvider(get()) }
+
     single<PricingRepository> { PricingRepositoryImpl(get()) }
 
     single<GetPurchasesUseCase> { GetPurchasesUseCaseImpl(get()) }
@@ -32,6 +34,8 @@ val appModule = module {
     single<GetSubscriptionsUseCase> { GetSubscriptionsUseCaseImpl(get()) }
 
     single<ConsumeUseCase> { ConsumeUseCaseImpl(get()) }
+
+    single<AcknowledgePurchaseUseCase> { AcknowledgePurchaseUseCaseImpl(get()) }
 
     viewModel {
         MainViewModel(
@@ -45,6 +49,7 @@ val appModule = module {
 
     viewModel {
         PricingViewModel(
+            get(),
             get(),
             get(),
             get()

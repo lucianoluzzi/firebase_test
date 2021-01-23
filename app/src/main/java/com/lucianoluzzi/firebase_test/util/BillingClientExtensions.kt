@@ -11,9 +11,9 @@ suspend fun BillingClient.connect(): Boolean {
             override fun onBillingSetupFinished(billingResult: BillingResult) {
                 if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
                     continuation.resume(true)
+                } else {
+                    continuation.resume(false)
                 }
-
-                continuation.resume(false)
             }
 
             override fun onBillingServiceDisconnected() {
