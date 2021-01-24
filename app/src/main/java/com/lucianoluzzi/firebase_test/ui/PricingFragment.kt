@@ -5,10 +5,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import com.android.billingclient.api.*
-import com.android.billingclient.api.BillingClient.BillingResponseCode.OK
-import com.android.billingclient.api.BillingClient.BillingResponseCode.USER_CANCELED
+import com.android.billingclient.api.BillingFlowParams
+import com.android.billingclient.api.Purchase
+import com.android.billingclient.api.SkuDetails
 import com.lucianoluzzi.firebase_test.databinding.PricingFragmentBinding
 import com.lucianoluzzi.firebase_test.viewModel.PricingViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
@@ -16,6 +17,7 @@ import org.koin.android.viewmodel.ext.android.viewModel
 class PricingFragment : Fragment() {
     private val TAG = "PricingFragment"
 
+    private lateinit var binding: PricingFragmentBinding
     private val viewModel: PricingViewModel by viewModel()
 
     override fun onCreateView(
@@ -23,7 +25,8 @@ class PricingFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return PricingFragmentBinding.inflate(inflater).root
+        binding = PricingFragmentBinding.inflate(inflater)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -41,25 +44,27 @@ class PricingFragment : Fragment() {
                 for (subscription in subscriptions) {
                     Log.d(TAG, subscription.toString())
                 }
+                setProductsList(subscriptions)
             } else {
                 Log.d(TAG, "No skus found from query")
+                binding.empty.isVisible = true
+                binding.loading.isVisible = false
             }
+        }
+        viewModel.purchasesUpdateLiveData.observe(viewLifecycleOwner) { purchases ->
+            acknowledgePurchases(purchases)
         }
     }
 
-    // Google Play calls this method to propogate the result of the purchase flow
-    // need to figure out how to set this in a clean fashion
-    private fun onPurchasesUpdated(billingResult: BillingResult, purchases: List<Purchase?>?) {
-        if (billingResult.responseCode == OK && purchases != null) {
-            for (purchase in purchases) {
-                purchase?.let {
-                    viewModel.acknowledgePurchase(it)
-                }
-            }
-        } else if (billingResult.responseCode == USER_CANCELED) {
-            Log.i(TAG, "User cancelled purchase flow.")
-        } else {
-            Log.i(TAG, "onPurchaseUpdated error: ${billingResult.responseCode}")
+    private fun setProductsList(products: List<SkuDetails>) {
+        binding.loading.isVisible = false
+        binding.empty.isVisible = false
+        binding.productsList.adapter = ProductAdapter(requireContext(), products)
+    }
+
+    private fun acknowledgePurchases(purchases: List<Purchase>?) {
+        purchases?.forEach {
+            viewModel.acknowledgePurchase(it)
         }
     }
 

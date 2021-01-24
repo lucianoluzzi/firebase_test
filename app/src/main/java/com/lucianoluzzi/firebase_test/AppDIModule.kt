@@ -1,5 +1,6 @@
 package com.lucianoluzzi.firebase_test
 
+import com.android.billingclient.api.PurchasesUpdatedListener
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.lucianoluzzi.firebase_test.data.PricingRepository
@@ -13,6 +14,7 @@ import org.koin.android.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val appModule = module {
+
     single<UserRepository> { UserRepositoryImpl(Firebase.auth) }
 
     single<GetUserUseCase> { GetUserUseCaseImpl(get()) }
@@ -25,7 +27,7 @@ val appModule = module {
 
     single<RegisterUserUseCase> { RegisterUserUseCaseImpl(get()) }
 
-    single { BillingClientProvider(get()) }
+    single { BillingClientProvider(get(), get()) }
 
     single<PricingRepository> { PricingRepositoryImpl(get()) }
 
@@ -36,6 +38,10 @@ val appModule = module {
     single<ConsumeUseCase> { ConsumeUseCaseImpl(get()) }
 
     single<AcknowledgePurchaseUseCase> { AcknowledgePurchaseUseCaseImpl(get()) }
+
+    single<PurchasesUpdatedListener> { BillingUpdateListener() }
+
+    single { BillingUpdateListener() }
 
     viewModel {
         MainViewModel(
@@ -49,6 +55,7 @@ val appModule = module {
 
     viewModel {
         PricingViewModel(
+            get(),
             get(),
             get(),
             get(),
