@@ -59,7 +59,9 @@ class PricingFragment : Fragment() {
     private fun setProductsList(products: List<SkuDetails>) {
         binding.loading.isVisible = false
         binding.empty.isVisible = false
-        binding.productsList.adapter = ProductAdapter(requireContext(), products)
+        binding.productsList.adapter = ProductAdapter(requireContext(), products) { skuDetails ->
+            launchPurchaseFlow(skuDetails)
+        }
     }
 
     private fun acknowledgePurchases(purchases: List<Purchase>?) {
@@ -69,11 +71,13 @@ class PricingFragment : Fragment() {
     }
 
     // When user selects a subscription
-    fun launchPurchaseFlow(skuDetails: SkuDetails) {
+    private fun launchPurchaseFlow(product: SkuDetails) {
         val flowParams = BillingFlowParams.newBuilder()
-            .setSkuDetails(skuDetails)
+            .setSkuDetails(product)
             .build()
-        //val responseCode = billingClient.launchBillingFlow(requireActivity(), flowParams)
-        //Log.i(TAG, "launchPurchaseFlow result $responseCode")
+
+        val billingClient = viewModel.getBillingClient()
+        val responseCode = billingClient.launchBillingFlow(requireActivity(), flowParams)
+        Log.i(TAG, "launchPurchaseFlow result ${responseCode.responseCode}")
     }
 }

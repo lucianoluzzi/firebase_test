@@ -13,7 +13,6 @@ class PricingRepositoryImpl(
 
     private val billingClient = billingClientProvider.billingClient
 
-
     override suspend fun getPurchases(purchaseType: String): List<Purchase>? {
         val connectIfNeeded = connectIfNeeded()
         if (!connectIfNeeded)
@@ -39,4 +38,6 @@ class PricingRepositoryImpl(
 
     override suspend fun acknowledgePurchase(acknowledgePurchaseParams: AcknowledgePurchaseParams): BillingResult =
         billingClient.acknowledgePurchase(acknowledgePurchaseParams)
+
+    override fun getBillingClient() = billingClient
 }

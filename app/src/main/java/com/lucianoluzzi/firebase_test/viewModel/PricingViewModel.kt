@@ -14,7 +14,8 @@ class PricingViewModel(
     private val getSubscriptionsUseCase: GetSubscriptionsUseCase,
     private val consumeUseCase: ConsumeUseCase,
     private val acknowledgePurchaseUseCase: AcknowledgePurchaseUseCase,
-    private val billingUpdateListener: BillingUpdateListener
+    private val getBillingClientUseCase: GetBillingClientUseCase,
+    billingUpdateListener: BillingUpdateListener
 ) : ViewModel() {
 
     private val _purchasedSubscriptionsLiveData = MutableLiveData<List<Purchase>?>()
@@ -50,4 +51,6 @@ class PricingViewModel(
             consumeUseCase.consumePurchase(purchase)
         }
     }
+
+    fun getBillingClient() = getBillingClientUseCase.getBillingClient()
 }

@@ -39,6 +39,8 @@ val appModule = module {
 
     single<AcknowledgePurchaseUseCase> { AcknowledgePurchaseUseCaseImpl(get()) }
 
+    single<GetBillingClientUseCase> { GetBillingClientUseCaseImpl(get()) }
+
     single<PurchasesUpdatedListener> { BillingUpdateListener() }
 
     single { BillingUpdateListener() }
@@ -55,6 +57,7 @@ val appModule = module {
 
     viewModel {
         PricingViewModel(
+            get(),
             get(),
             get(),
             get(),
