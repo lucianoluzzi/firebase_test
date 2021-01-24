@@ -15,8 +15,6 @@ class BillingUpdateListener : PurchasesUpdatedListener {
         billingResult: BillingResult,
         purchases: MutableList<Purchase>?
     ) {
-        purchases?.let {
-            _purchaseUpdateLiveData.value = it
-        }
+        _purchaseUpdateLiveData.value = purchases
     }
 }

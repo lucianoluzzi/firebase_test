@@ -11,7 +11,7 @@ class AcknowledgePurchaseUseCaseImpl(
 ) : AcknowledgePurchaseUseCase {
 
     override suspend fun acknowledgePurchase(purchase: Purchase): BillingResult? {
-        if (purchase.purchaseState != PURCHASED || !purchase.isAcknowledged)
+        if (purchase.purchaseState != PURCHASED || purchase.isAcknowledged)
             return null
 
         val acknowledgePurchaseParams = AcknowledgePurchaseParams.newBuilder()

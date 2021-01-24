@@ -13,6 +13,8 @@ import com.lucianoluzzi.firebase_test.viewModel.PricingViewModel
 import org.koin.android.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
+private val billingUpdateListener = BillingUpdateListener()
+
 val appModule = module {
 
     single<UserRepository> { UserRepositoryImpl(Firebase.auth) }
@@ -41,9 +43,9 @@ val appModule = module {
 
     single<GetBillingClientUseCase> { GetBillingClientUseCaseImpl(get()) }
 
-    single<PurchasesUpdatedListener> { BillingUpdateListener() }
+    single<PurchasesUpdatedListener> { billingUpdateListener }
 
-    single { BillingUpdateListener() }
+    single { billingUpdateListener }
 
     viewModel {
         MainViewModel(
