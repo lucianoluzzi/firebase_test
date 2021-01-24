@@ -70,7 +70,6 @@ class PricingFragment : Fragment() {
         }
     }
 
-    // When user selects a subscription
     private fun launchPurchaseFlow(product: SkuDetails) {
         val flowParams = BillingFlowParams.newBuilder()
             .setSkuDetails(product)
